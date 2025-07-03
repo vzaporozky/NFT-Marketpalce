@@ -1,0 +1,25 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "ES2024",
+		"rootDir": ".",
+		"outDir": "./dist",
+		"lib": ["ES2024"],
+		"allowUnreachableCode": false,
+		"allowUnusedLabels": false,
+		"forceConsistentCasingInFileNames": true,
+		"noEmitOnError": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitReturns": true,
+		"pretty": true,
+		"sourceMap": true,
+		"stripInternal": true,
+		"resolveJsonModule": true,
+		"esModuleInterop": true,
+		// "strict": true,
+		"incremental": true,
+		"skipLibCheck": true
+	},
+	"exclude": ["node_modules", "temp", "logs", "build", "dist"],
+	"include": ["src/**/*.ts", "test/**/*.ts"]
+}
