@@ -10,6 +10,7 @@ datasource db {
 model User {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   user_wallet   String   @unique  
+  password      String   @unique  
   photos        Photo[]  
   createdAt     DateTime @default(now())
   lastInteraction DateTime @updatedAt
