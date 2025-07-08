@@ -5,7 +5,7 @@ import '@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 
 contract NFTMarketplace is ERC721URIStorage, Ownable {
-	uint256 private _tokenIdCounter; // Замена Counters на uint256
+	uint256 private _tokenIdCounter;
 
 	struct Listing {
 		uint256 price;
@@ -40,11 +40,11 @@ contract NFTMarketplace is ERC721URIStorage, Ownable {
 		uint256 _marketplaceFee
 	) ERC721(name, symbol) Ownable(msg.sender) {
 		marketplaceFee = _marketplaceFee;
-		_tokenIdCounter = 0; // Инициализация счетчика
+		_tokenIdCounter = 0;
 	}
 
 	function mintNFT(string memory tokenURI) public returns (uint256) {
-		_tokenIdCounter++; // Инкремент счетчика
+		_tokenIdCounter++;
 		uint256 newTokenId = _tokenIdCounter;
 
 		_safeMint(msg.sender, newTokenId);
@@ -54,7 +54,6 @@ contract NFTMarketplace is ERC721URIStorage, Ownable {
 		return newTokenId;
 	}
 
-	// Остальные функции остаются без изменений
 	function listNFT(uint256 tokenId, uint256 price) public {
 		require(ownerOf(tokenId) == msg.sender, 'Not the owner');
 		require(price > 0, 'Price must be greater than 0');
