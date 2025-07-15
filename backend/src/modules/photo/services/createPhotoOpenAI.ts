@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 
 const TEMP_DIR = '/app/temp';
 
-export async function createPhotoOnServer(fastify, description) {
+export async function createPhotoOpenAI(fastify, description) {
 	try {
 		const openai = new OpenAI();
 

@@ -1,5 +1,4 @@
 import Fastify from 'fastify';
-import fastifySecureSession from '@fastify/secure-session';
 
 import fs from 'fs';
 import path from 'path';
@@ -11,14 +10,10 @@ export const fastify = Fastify({
 	logger: true,
 });
 
+require('dotenv').config();
+
 fastify.register(prismaPlugin);
 fastify.register(shutdownPlugin);
-fastify.register(fastifySecureSession, {
-	sessionName: 'session',
-	cookieName: 'my-session-cookie',
-	key: fs.readFileSync(path.join(__dirname, 'secret-key')),
-	expiry: 24 * 60 * 60,
-});
 fastify.register(photoRoutes);
 
 const startServer = async () => {

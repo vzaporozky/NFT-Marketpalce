@@ -1,5 +1,5 @@
 import { checkUserBalance } from '../../../utils/checkBalance';
-import { createPhotoOnServer } from './createPhoto';
+import { createPhotoOpenAI } from './createPhotoOpenAI';
 import { fastify } from '../../../server';
 
 export async function createPhotoService({ title, description, userAddress }) {
@@ -8,19 +8,23 @@ export async function createPhotoService({ title, description, userAddress }) {
 			throw new Error('Title and userAddress are required');
 		}
 
-		const hasEnoughBalance = await checkUserBalance(fastify, userAddress);
+		const user = await fastify.prisma.user.findUnique({
+			where: { id: userAddress },
+		});
+
+		if (!user) {
+			throw new Error('User is not auth');
+		}
+
+		const hasEnoughBalance = await checkUserBalance(userAddress);
 		if (!hasEnoughBalance) {
 			throw new Error('Insufficient balance to create photo');
 		}
 
-		const { photoPath, photoId } = await createPhotoOnServer(
+		const { photoPath, photoId } = await createPhotoOpenAI(
 			fastify,
 			description
 		);
-
-		const user = await fastify.prisma.user.findUnique({
-			where: { id: userAddress },
-		});
 
 		const photo = await fastify.prisma.photo.create({
 			data: {
