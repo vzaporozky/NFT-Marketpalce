@@ -29,13 +29,17 @@
 		"typescript": "^5.8.3"
 	},
 	"dependencies": {
+		"@fastify/secure-session": "^8.2.0",
 		"@prisma/client": "^6.10.1",
 		"axios": "^1.9.0",
 		"dotenv": "^16.5.0",
 		"ethers": "^6.15.0",
 		"fastify": "^5.4.0",
+		"fastify-passport": "^0.6.0",
 		"fastify-plugin": "^5.0.1",
 		"nanoid": "^5.1.5",
+		"openai": "^5.9.0",
+		"passport-http-bearer": "^1.0.1",
 		"ts-node": "^10.9.2",
 		"winston": "^3.17.0"
 	}

@@ -1,19 +1,25 @@
 import Fastify from 'fastify';
+import fastifySecureSession from '@fastify/secure-session';
 
 import fs from 'fs';
 import path from 'path';
-import { createPhoto } from './utils/createPhoto';
 import prismaPlugin from './plugins/prisma';
 import shutdownPlugin from './plugins/shutdown';
+import photoRoutes from './modules/photo/routes/photoRoutes';
 
-const fastify = Fastify({
+export const fastify = Fastify({
 	logger: true,
 });
 
 fastify.register(prismaPlugin);
 fastify.register(shutdownPlugin);
-
-fastify.post('/createPhoto', createPhoto);
+fastify.register(fastifySecureSession, {
+	sessionName: 'session',
+	cookieName: 'my-session-cookie',
+	key: fs.readFileSync(path.join(__dirname, 'secret-key')),
+	expiry: 24 * 60 * 60,
+});
+fastify.register(photoRoutes);
 
 const startServer = async () => {
 	try {
