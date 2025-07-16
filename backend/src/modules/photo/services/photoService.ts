@@ -16,10 +16,10 @@ async function createPhotoService({ title, description, userAddress }) {
 			throw new Error('User not found');
 		}
 
-		const hasEnoughBalance = await checkUserBalance(userAddress);
-		if (!hasEnoughBalance) {
-			throw new Error('Insufficient balance to create photo');
-		}
+		// const hasEnoughBalance = await checkUserBalance(userAddress);
+		// if (!hasEnoughBalance) {
+		// 	throw new Error('Insufficient balance to create photo');
+		// }
 
 		const { photoPath, photoId } = await createPhotoOpenAI(
 			fastify,
