@@ -1,16 +1,14 @@
-FROM node:20 AS deps
+FROM node:20-slim AS deps
 
 RUN mkdir /app && chown node:node /app
-# RUN mkdir -p /app/temp && chown -R node:node /app
 
 USER node
 WORKDIR /app
-# COPY --chown=node:node temp ./temp
 
 COPY --chown=node:node package*.json ./
 
-RUN npm ci --only=production --ignore-scripts && npm cache clean --force
-# RUN npm ci --ignore-scripts
+# RUN npm ci --only=production --ignore-scripts && npm cache clean --force
+RUN npm ci --ignore-scripts
 
 
 
@@ -22,8 +20,6 @@ USER node
 WORKDIR /app
 
 COPY --chown=node:node --from=deps /app/node_modules ./node_modules
-# COPY --chown=node:node . .
-# COPY --chown=node:node temp ./temp
 COPY --chown=node:node src ./src 
 COPY --chown=node:node prisma ./prisma
 COPY --chown=node:node tsconfig.json ./
@@ -38,9 +34,10 @@ RUN npm run compile
 
 
 FROM node:20-slim AS production    
+RUN apt-get update -y && apt-get install -y openssl
+
 RUN mkdir -p /app && chown node:node /app   
 RUN mkdir -p /app/temp && chown -R node:node /app
-# RUN mkdir -p /app/logs && chown -R node:node /app/logs && chmod 777 /app/logs
 
 USER node
 WORKDIR /app
@@ -48,8 +45,7 @@ WORKDIR /app
 COPY --chown=node:node --from=builder /app/dist ./dist
 COPY --chown=node:node --from=builder /app/package*.json ./
 COPY --chown=node:node --from=builder /app/node_modules ./node_modules 
-COPY --chown=node:node prisma ./prisma 
-# COPY --chown=node:node temp ./temp
+COPY --chown=node:node prisma ./prisma
 
 
 EXPOSE 3000

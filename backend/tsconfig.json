@@ -5,6 +5,7 @@
 		"rootDir": ".",
 		"outDir": "./dist",
 		"lib": ["ES2024"],
+		"types": ["node"],
 		"allowUnreachableCode": false,
 		"allowUnusedLabels": false,
 		"forceConsistentCasingInFileNames": true,
