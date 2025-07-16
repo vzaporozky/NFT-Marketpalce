@@ -12,10 +12,21 @@ async function createUser(request, reply) {
 			});
 		}
 
+		const user = await fastify.prisma.user.findUnique({
+			where: { id: userAddress },
+		});
+
+		if (user.id) {
+			return reply.send({
+				error: 'User already exist',
+				message: 'User already exist. Try log in',
+			});
+		}
+
 		const salt = await bcrypt.genSalt(10);
 		const hashedPassword = await bcrypt.hash(password, salt);
 
-		const user = await fastify.prisma.user.create({
+		const userNew = await fastify.prisma.user.create({
 			data: {
 				userAddress,
 				password: hashedPassword,
@@ -25,9 +36,9 @@ async function createUser(request, reply) {
 		reply.status(201).send({
 			message: 'User created successfully',
 			user: {
-				id: user.id,
-				userAddress: user.userAddress,
-				createdAt: user.createdAt,
+				id: userNew.id,
+				userAddress: userNew.userAddress,
+				createdAt: userNew.createdAt,
 			},
 		});
 	} catch (error) {
