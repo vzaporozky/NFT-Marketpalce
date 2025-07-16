@@ -2,7 +2,7 @@ import { checkUserBalance } from '../../../utils/checkBalance';
 import { createPhotoOpenAI } from './createPhotoOpenAI';
 import { fastify } from '../../../server';
 
-export async function createPhotoService({ title, description, userAddress }) {
+async function createPhotoService({ title, description, userAddress }) {
 	try {
 		if (!title || !userAddress) {
 			throw new Error('Title and userAddress are required');
@@ -13,7 +13,7 @@ export async function createPhotoService({ title, description, userAddress }) {
 		});
 
 		if (!user) {
-			throw new Error('User is not auth');
+			throw new Error('User not found');
 		}
 
 		const hasEnoughBalance = await checkUserBalance(userAddress);
@@ -42,3 +42,5 @@ export async function createPhotoService({ title, description, userAddress }) {
 		throw new Error(error.message || 'Internal Server Error');
 	}
 }
+
+export { createPhotoService };

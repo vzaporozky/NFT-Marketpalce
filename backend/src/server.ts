@@ -5,6 +5,8 @@ import path from 'path';
 import prismaPlugin from './plugins/prisma';
 import shutdownPlugin from './plugins/shutdown';
 import photoRoutes from './modules/photo/routes/photoRoutes';
+import { authRoutes } from './modules/auth/routes/auth.routes';
+const jwtPlugin = require('./plugins/jwtPlugin');
 
 export const fastify = Fastify({
 	logger: true,
@@ -12,9 +14,12 @@ export const fastify = Fastify({
 
 require('dotenv').config();
 
+fastify.register(jwtPlugin);
 fastify.register(prismaPlugin);
 fastify.register(shutdownPlugin);
-fastify.register(photoRoutes);
+
+fastify.register(authRoutes, { prefix: '/auth' });
+fastify.register(photoRoutes, { prefix: '/photo' });
 
 const startServer = async () => {
 	try {
