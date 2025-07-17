@@ -26,6 +26,9 @@ services:
     depends_on:
       - mongo
       # - blockchain
+    volumes:
+      - ./backend:/app
+    restart: always
     networks:
       - nft-network
 

@@ -50,4 +50,5 @@ COPY --chown=node:node prisma ./prisma
 
 EXPOSE 3000
 
-CMD ["node", "./dist/src/index.js"] 
+# CMD ["node", "./dist/src/index.js"] 
+CMD ["npm", "run", "start"]
