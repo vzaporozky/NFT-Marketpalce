@@ -29,6 +29,7 @@ const startServer = async () => {
 		fastify.log.info('Server listening on http://localhost:3000');
 	} catch (err) {
 		fastify.log.error(err);
+		await fastify.prisma.$disconnect();
 		process.exit(1);
 	}
 };
