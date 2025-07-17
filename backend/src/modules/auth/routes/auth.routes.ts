@@ -1,5 +1,5 @@
-import { comparePassword } from '../services/compare';
 import { createUser } from '../controllers/auth.controller';
+import bcrypt from 'bcrypt';
 
 async function authRoutes(fastify) {
 	fastify.post('/', createUser);
@@ -8,14 +8,14 @@ async function authRoutes(fastify) {
 
 		try {
 			const user = await fastify.prisma.user.findUnique({
-				where: { id: userAddress },
+				where: { userAddress: userAddress },
 			});
 
 			if (!user) {
 				return reply.status(401).send({ error: 'User not found.' });
 			}
 
-			const isPasswordValid = await comparePassword(password, user.password);
+			const isPasswordValid = await bcrypt.compare(password, user.password);
 
 			if (!isPasswordValid) {
 				return reply.status(401).send({ error: 'Incorrect data.' });

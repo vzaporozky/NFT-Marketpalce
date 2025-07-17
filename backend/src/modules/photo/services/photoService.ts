@@ -9,7 +9,7 @@ async function createPhotoService({ title, description, userAddress }) {
 		}
 
 		const user = await fastify.prisma.user.findUnique({
-			where: { id: userAddress },
+			where: { userAddress: userAddress },
 		});
 
 		if (!user) {

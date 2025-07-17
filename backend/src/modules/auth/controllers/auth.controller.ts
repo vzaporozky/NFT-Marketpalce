@@ -13,10 +13,10 @@ async function createUser(request, reply) {
 		}
 
 		const user = await fastify.prisma.user.findUnique({
-			where: { id: userAddress },
+			where: { userAddress: userAddress },
 		});
 
-		if (user.id) {
+		if (user) {
 			return reply.send({
 				error: 'User already exist',
 				message: 'User already exist. Try log in',
