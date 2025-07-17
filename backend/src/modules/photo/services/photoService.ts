@@ -2,7 +2,7 @@ import { checkUserBalance } from '../../../utils/checkBalance';
 import { createPhotoOpenAI } from './createPhotoOpenAI';
 import { fastify } from '../../../server';
 
-async function createPhotoService({ title, description, userAddress }) {
+async function createPhotoService(title, description, userAddress) {
 	try {
 		if (!title || !userAddress) {
 			throw new Error('Title and userAddress are required');
@@ -21,22 +21,24 @@ async function createPhotoService({ title, description, userAddress }) {
 		// 	throw new Error('Insufficient balance to create photo');
 		// }
 
-		const { photoPath, photoId } = await createPhotoOpenAI(
+		const { photoPath, photoId, defaultPrompt } = await createPhotoOpenAI(
 			fastify,
 			description
 		);
 
+		if (!description) description = defaultPrompt;
+
 		const photo = await fastify.prisma.photo.create({
 			data: {
 				user: {
-					connect: { id: userAddress },
+					connect: { userAddress: userAddress },
 				},
 				photoPath,
 				description,
 			},
 		});
 
-		return { photo };
+		return { photo, photoPath };
 	} catch (error) {
 		fastify.log.error(error);
 		throw new Error(error.message || 'Internal Server Error');

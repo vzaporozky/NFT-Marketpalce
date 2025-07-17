@@ -7,29 +7,36 @@ const TEMP_DIR = '/app/temp';
 
 async function createPhotoOpenAI(fastify, description) {
 	try {
-		const openai = new OpenAI();
+		await fs.mkdir(TEMP_DIR, { recursive: true });
 
-		const photoId = nanoid();
-		const photoPath = path.join(TEMP_DIR, `${photoId}.jpg`);
-
-		const response = await openai.responses.create({
-			model: 'gpt-4.1-mini',
-			input:
-				'Generate an image of cyberpunk girl with pink hair and light blue eyes',
-			tools: [{ type: 'image_generation' }],
+		const openai = new OpenAI({
+			apiKey: process.env.OPEN_AI_KEY,
 		});
 
-		const imageData = response.output
-			.filter(output => output.type === 'image_generation_call')
-			.map(output => output.result);
+		const photoId = nanoid();
+		const photoPath = path.join(TEMP_DIR, `${photoId}.png`);
 
-		if (imageData.length > 0) {
-			const imageBase64 = imageData[0];
+		const defaultPrompt =
+			'A cyberpunk robot with pink hair and light blue eyes';
 
-			fs.writeFile(photoPath, Buffer.from(imageBase64, 'base64'));
+		const response = await openai.images.generate({
+			model: 'dall-e-2',
+			prompt: description || defaultPrompt,
+			n: 1,
+			size: '1024x1024',
+			response_format: 'b64_json',
+		});
+
+		const imageData = response.data[0].b64_json;
+
+		if (!imageData) {
+			throw new Error('No image data returned from OpenAI API');
 		}
 
-		return { photoPath, photoId };
+		const image_bytes = Buffer.from(imageData, 'base64');
+		await fs.writeFile(photoPath, image_bytes);
+
+		return { photoPath, photoId, defaultPrompt };
 	} catch (error) {
 		fastify.log.error('Photo creation error:', error);
 		throw new Error('Failed to create photo');
