@@ -15,6 +15,6 @@ export const createPhoto = async (request, reply) => {
 
 		return reply.sendFile(photoPath);
 	} catch (error) {
-		return reply.code(400).send({ error: error.message });
+		return reply.code(500).send({ error: 'Failed to create or send photo' });
 	}
 };

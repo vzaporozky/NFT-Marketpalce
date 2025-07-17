@@ -12,11 +12,17 @@ export const fastify = Fastify({
 	logger: true,
 });
 
+const TEMP_DIR = '/app/temp';
+
 require('dotenv').config();
 
 fastify.register(jwtPlugin);
 fastify.register(prismaPlugin);
 fastify.register(shutdownPlugin);
+fastify.register(require('@fastify/static'), {
+	root: TEMP_DIR,
+	// prefix: '/uploads/',
+});
 
 fastify.register(authRoutes, { prefix: '/auth' });
 fastify.register(photoRoutes, { prefix: '/photo' });
