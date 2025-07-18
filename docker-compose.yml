@@ -43,19 +43,20 @@ services:
     networks:
       - nft-network
 
-  # blockchain:
-  #   container_name: nft-blockchain
-  #   build:
-  #     context: ./blockchain
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - '8545:8545'
-  #   environment:
-  #     - PRIVATE_KEY=${PRIVATE_KEY}
-  #   volumes:
-  #     - ./blockchain:/app
-  #   networks:
-  #     - nft-network
+  blockchain:
+    container_name: nft-blockchain
+    build:
+      context: ./blockchain
+      dockerfile: Dockerfile
+    ports:
+      - '8545:8545'
+    # environment:
+    #   - PRIVATE_KEY=${PRIVATE_KEY}
+    volumes:
+      - ./blockchain:/app
+    restart: always
+    networks:
+      - nft-network
 
 volumes:
   mongo-data:
