@@ -28,7 +28,7 @@ async function createPhotoService(title, description, userAddress) {
 
 		if (!description) description = defaultPrompt;
 
-		const photo = await fastify.prisma.photo.create({
+		await fastify.prisma.photo.create({
 			data: {
 				user: {
 					connect: { userAddress: userAddress },
@@ -38,7 +38,7 @@ async function createPhotoService(title, description, userAddress) {
 			},
 		});
 
-		return { photo, photoPath };
+		return { photoId, photoPath };
 	} catch (error) {
 		fastify.log.error(error);
 		throw new Error(error.message || 'Internal Server Error');

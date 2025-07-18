@@ -20,7 +20,7 @@ async function createPhotoOpenAI(fastify, description) {
 			'A cyberpunk robot with pink hair and light blue eyes';
 
 		const response = await openai.images.generate({
-			model: 'dall-e-2',
+			model: 'dall-e-3',
 			prompt: description || defaultPrompt,
 			n: 1,
 			size: '1024x1024',
