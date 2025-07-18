@@ -1,20 +1,22 @@
 {
-  "name": "nft-marketplace",
-  "version": "1.0.0",
-  "description": "NFT Marketplace with Balance Management",
-  "scripts": {
-    "test": "hardhat test",
-    "deploy": "hardhat run scripts/deploy.js --network sepolia",
-    "interact": "hardhat run scripts/interact.js --network sepolia"
-  },
-  "dependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "@openzeppelin/contracts": "^5.0.2",
-    "dotenv": "^16.4.5"
-  },
-  "devDependencies": {
-    "@nomicfoundation/hardhat-ethers": "^3.0.9",
-    "ethers": "^6.15.0",
-    "hardhat": "^2.25.0"
-  }
+	"name": "nft-marketplace",
+	"version": "1.0.0",
+	"description": "NFT Marketplace with Balance Management",
+	"scripts": {
+		"test": "npx hardhat test",
+		"node": "npx hardhat node",
+		"compile": "npx hardhat compile",
+		"deploy": "npx hardhat run scripts/deploy.js --network sepolia",
+		"interact": "npx hardhat run scripts/interact.js --network sepolia"
+	},
+	"dependencies": {
+		"@nomicfoundation/hardhat-toolbox": "^5.0.0",
+		"@openzeppelin/contracts": "^5.0.2",
+		"dotenv": "^16.4.5"
+	},
+	"devDependencies": {
+		"@nomicfoundation/hardhat-ethers": "^3.0.9",
+		"ethers": "^6.15.0",
+		"hardhat": "^2.25.0"
+	}
 }

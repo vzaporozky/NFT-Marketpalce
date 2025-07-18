@@ -50,13 +50,15 @@ services:
       dockerfile: Dockerfile
     ports:
       - '8545:8545'
-    # environment:
-    #   - PRIVATE_KEY=${PRIVATE_KEY}
+    env_file:
+      - ./blockchain/.env
     volumes:
       - ./blockchain:/app
     restart: always
     networks:
       - nft-network
+    command: ['npm', 'run', 'node']
+    # command: ["npm", "run", "deploy"]
 
 volumes:
   mongo-data:
