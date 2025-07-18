@@ -1,15 +1,15 @@
-FROM node:20-slim
-WORKDIR /app
+# FROM node:20-slim
+# WORKDIR /app
 
-RUN chown -R node:node /app
-USER node
+# RUN chown -R node:node /app
+# USER node
 
-COPY --chown=node:node package*.json ./
+# COPY --chown=node:node package*.json ./
 
-RUN npm ci --ignore-scripts
+# RUN npm ci --ignore-scripts
 
-COPY --chown=node:node . .
+# COPY --chown=node:node . .
 
-EXPOSE 8545
+# EXPOSE 8545
 
-CMD ["npx", "hardhat", "node"]
+# CMD ["npx", "hardhat", "node"]
