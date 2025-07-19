@@ -6,8 +6,9 @@
 		"test": "npx hardhat test",
 		"node": "npx hardhat node",
 		"compile": "npx hardhat compile",
-		"deploy": "npx hardhat run scripts/deploy.js --network sepolia",
-		"interact": "npx hardhat run scripts/interact.js --network sepolia"
+		"deploy-test": "npx hardhat run scripts/deploy.ts --network localhost",
+		"deploy": "npx hardhat run scripts/deploy.ts --network sepolia",
+		"interact": "npx hardhat run scripts/interact.ts --network sepolia"
 	},
 	"dependencies": {
 		"@nomicfoundation/hardhat-toolbox": "^5.0.0",
