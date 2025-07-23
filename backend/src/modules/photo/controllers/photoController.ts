@@ -12,7 +12,7 @@ export const createPhoto = async (request, reply) => {
 		// );
 
 		// testEther();
-		balanceManagerEther();
+		// balanceManagerEther();
 
 		reply.header('Content-Type', 'image/jpeg');
 		// return reply.sendFile(photoId + '.png');
