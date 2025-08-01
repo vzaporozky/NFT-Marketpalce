@@ -43,23 +43,6 @@ services:
     networks:
       - nft-network
 
-  # blockchain:
-  #   container_name: nft-blockchain
-  #   build:
-  #     context: ./blockchain
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - '8545:8545'
-  #   # env_file:
-  #   #   - ./blockchain/.env
-  #   volumes:
-  #     - ./blockchain:/app
-  #   restart: always
-  #   networks:
-  #     - nft-network
-  #   command: ['npm', 'run', 'node']
-  #   # command: ["npm", "run", "deploy"]
-
 volumes:
   mongo-data:
     driver: local
