@@ -28,6 +28,7 @@ services:
       # - blockchain
     volumes:
       - ./backend:/app
+      - photos-volume:/app/photos
     restart: always
     networks:
       - nft-network
@@ -45,6 +46,8 @@ services:
 
 volumes:
   mongo-data:
+    driver: local
+  photos-volume:
     driver: local
 
 networks:

@@ -3,18 +3,18 @@ import OpenAI from 'openai';
 import fs from 'fs/promises';
 import { nanoid } from 'nanoid';
 
-const TEMP_DIR = '/app/temp';
+const PHOTOS_DIR = '/app/photos';
 
 async function createPhotoOpenAI(fastify, description) {
 	try {
-		await fs.mkdir(TEMP_DIR, { recursive: true });
+		await fs.mkdir(PHOTOS_DIR, { recursive: true });
 
 		const openai = new OpenAI({
 			apiKey: process.env.OPEN_AI_KEY,
 		});
 
 		const photoId = nanoid();
-		const photoPath = path.join(TEMP_DIR, `${photoId}.png`);
+		const photoPath = path.join(PHOTOS_DIR, `${photoId}.png`);
 
 		const defaultPrompt =
 			'A cyberpunk robot with pink hair and light blue eyes';

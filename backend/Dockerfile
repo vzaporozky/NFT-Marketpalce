@@ -37,7 +37,7 @@ FROM node:20-slim AS production
 RUN apt-get update -y && apt-get install -y openssl
 
 RUN mkdir -p /app && chown node:node /app   
-RUN mkdir -p /app/temp && chown -R node:node /app
+RUN mkdir -p /app/photos && chown -R node:node /app
 
 USER node
 WORKDIR /app
