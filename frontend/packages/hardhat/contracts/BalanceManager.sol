@@ -10,6 +10,8 @@ contract BalanceManager is Ownable, ReentrancyGuard {
 
     event Deposit(address indexed user, uint256 amount);
     event BalanceDecreased(address indexed user, uint256 amount);
+    event PriceUpdated(uint256 newPrice);
+    event Withdrawal(address indexed user, uint256 amount);
 
     constructor() Ownable(msg.sender) {}
 
@@ -27,6 +29,23 @@ contract BalanceManager is Ownable, ReentrancyGuard {
         require(balances[msg.sender] >= price, "Insufficient balance");
         balances[msg.sender] -= price;
         emit BalanceDecreased(msg.sender, price);
+    }
+
+    function setPrice(uint256 newPrice) external onlyOwner {
+        require(newPrice > 0, "Price must be greater than 0");
+        price = newPrice;
+        emit PriceUpdated(newPrice);
+    }
+
+    function withdraw(uint256 amount) external nonReentrant {
+        require(amount > 0, "Amount must be greater than 0");
+        require(balances[msg.sender] >= amount, "Insufficient balance");
+        balances[msg.sender] -= amount;
+
+        (bool success, ) = msg.sender.call{ value: amount }("");
+        require(success, "Withdrawal failed");
+
+        emit Withdrawal(msg.sender, amount);
     }
 
     function emergencyWithdraw() external onlyOwner nonReentrant {
