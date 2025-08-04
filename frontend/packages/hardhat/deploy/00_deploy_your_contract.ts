@@ -1,5 +1,6 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
+import { Contract } from "ethers";
 // import { Contract } from "ethers";
 
 const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -16,28 +17,27 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  await deploy("YourContract", {
+  // await deploy("NFTMarketplace", {
+  //   from: deployer,
+  //   // Contract constructor arguments
+  //   args: [deployer],
+  //   log: true,
+  //   autoMine: true,
+  // });
+
+  await deploy("BalanceManager", {
     from: deployer,
     // Contract constructor arguments
-    args: [deployer],
+    // args: [deployer],
     log: true,
     autoMine: true,
   });
 
-  // const NFTMarketplace = await hre.ethers.getContractFactory('NFTMarketplace');
-  // console.log('Deploying NFTMarketplace...');
-  // const NFTMarket = await NFTMarketplace.deploy('NFTMarketplace', 'NFTM', 100);
-  // await NFTMarket.waitForDeployment();
-  // console.log('NFTMarket deployed to:', await NFTMarket.getAddress());
+  // const nftMarketplace = await hre.ethers.getContract<Contract>("NFTMarketplace", deployer);
+  // console.log("👋 Initial greeting:", await nftMarketplace.getAddress());
 
-  const BalanceManager = await hre.ethers.getContractFactory("BalanceManager");
-  console.log("Deploying BalanceManager...");
-  const bm = await BalanceManager.deploy();
-  await bm.waitForDeployment();
-  console.log("BalanceManager deployed to:", await bm.getAddress());
-
-  // const yourContract = await hre.ethers.getContract<Contract>("YourContract", deployer);
-  // console.log("👋 Initial greeting:", await yourContract.greeting());
+  const balanceManager = await hre.ethers.getContract<Contract>("BalanceManager", deployer);
+  console.log("👋 Initial greeting:", await balanceManager.getAddress());
 };
 
 export default deployYourContract;

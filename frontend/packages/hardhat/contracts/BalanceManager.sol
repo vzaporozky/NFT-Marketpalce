@@ -1,12 +1,12 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+// SPDX-License-Identifier: Unlicense
+pragma solidity >=0.8.0 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract BalanceManager is Ownable, ReentrancyGuard {
     mapping(address => uint256) private balances;
-    uint256 price = 0.0008 ether;
+    uint256 price = 0.0005 ether;
 
     event Deposit(address indexed user, uint256 amount);
     event BalanceDecreased(address indexed user, uint256 amount);
