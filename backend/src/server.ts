@@ -5,7 +5,7 @@ import path from 'path';
 import prismaPlugin from './plugins/prisma';
 import shutdownPlugin from './plugins/shutdown';
 import photoRoutes from './modules/photo/routes/photoRoutes';
-import { authRoutes } from './modules/auth/routes/auth.routes';
+// import { authRoutes } from './modules/auth/routes/auth.routes';
 const jwtPlugin = require('./plugins/jwtPlugin');
 
 export const fastify = Fastify({
@@ -24,7 +24,7 @@ fastify.register(require('@fastify/static'), {
 	// prefix: '/uploads/',
 });
 
-fastify.register(authRoutes, { prefix: '/auth' });
+// fastify.register(authRoutes, { prefix: '/auth' });
 fastify.register(photoRoutes, { prefix: '/photo' });
 
 const startServer = async () => {
