@@ -79,7 +79,7 @@ contract NFTMarketplace is ERC721URIStorage, Ownable, ReentrancyGuard {
         emit TokenListedSuccess(tokenId, msg.sender, price, true);
     }
 
-    function unlistToken(uint256 tokenId) public nonReentrant {
+    function unListToken(uint256 tokenId) public nonReentrant {
         require(idToListedToken[tokenId].seller == msg.sender, "Only seller can unlist");
         require(idToListedToken[tokenId].currentlyListed, "Token not listed");
 
