@@ -85,7 +85,6 @@ contract NFTMarketplace is ERC721URIStorage, Ownable, ReentrancyGuard {
 
         idToListedToken[tokenId].currentlyListed = false;
 
-        // Remove tokenId from listedTokenIds array
         for (uint256 i = 0; i < listedTokenIds.length; i++) {
             if (listedTokenIds[i] == tokenId) {
                 listedTokenIds[i] = listedTokenIds[listedTokenIds.length - 1];
@@ -137,7 +136,6 @@ contract NFTMarketplace is ERC721URIStorage, Ownable, ReentrancyGuard {
         idToListedToken[tokenId].seller = payable(msg.sender);
         _itemsSold++;
 
-        // Remove tokenId from listedTokenIds array
         for (uint256 i = 0; i < listedTokenIds.length; i++) {
             if (listedTokenIds[i] == tokenId) {
                 listedTokenIds[i] = listedTokenIds[listedTokenIds.length - 1];
