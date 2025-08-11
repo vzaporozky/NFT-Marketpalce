@@ -19,6 +19,10 @@ contract BalanceManager is Ownable, ReentrancyGuard {
         return balances[user];
     }
 
+    function getPrice() public view returns (uint256) {
+        return price;
+    }
+
     function deposit() external payable nonReentrant {
         require(msg.value > 0, "Deposit amount must be greater than 0");
         balances[msg.sender] += msg.value;

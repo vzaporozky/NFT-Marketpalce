@@ -14,18 +14,18 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     autoMine: true,
   });
 
-  // await deploy("BalanceManager", {
-  //   from: deployer, 
-  //   // args: [deployer],
-  //   log: true,
-  //   autoMine: true,
-  // });
+  await deploy("BalanceManager", {
+    from: deployer,
+    // args: [deployer],
+    log: true,
+    autoMine: true,
+  });
 
   const nftMarketplace = await hre.ethers.getContract<Contract>("NFTMarketplace", deployer);
   console.log("👋 Initial greeting:", await nftMarketplace.getAddress());
 
-  // const balanceManager = await hre.ethers.getContract<Contract>("BalanceManager", deployer);
-  // console.log("👋 Initial greeting:", await balanceManager.getAddress());
+  const balanceManager = await hre.ethers.getContract<Contract>("BalanceManager", deployer);
+  console.log("👋 Initial greeting:", await balanceManager.getAddress());
 };
 
 export default deployYourContract;
