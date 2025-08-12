@@ -4,12 +4,9 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import type { NextPage } from "next";
 import { parseEther } from "viem";
-import { useAccount, useReadContract, useWaitForTransactionReceipt } from "wagmi";
-import deployedContracts from "~~/contracts/deployedContracts";
-import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { useAccount, useWaitForTransactionReceipt } from "wagmi";
+import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { notification } from "~~/utils/scaffold-eth";
-
-const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3" as const;
 
 const MintNFT: NextPage = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -24,9 +21,8 @@ const MintNFT: NextPage = () => {
 
   const { isConnected } = useAccount();
 
-  const { data: listPrice } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: deployedContracts[31337].NFTMarketplace.abi,
+  const { data: listPrice } = useScaffoldReadContract({
+    contractName: "NFTMarketplace",
     functionName: "getListPrice",
   });
 
@@ -36,8 +32,6 @@ const MintNFT: NextPage = () => {
     isPending: isMinting,
     error: mintError,
   } = useScaffoldWriteContract({ contractName: "NFTMarketplace" });
-
-  // const { data: hash, isPending: isMinting, error: mintError } = useWriteContract();
 
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
     hash,
@@ -159,14 +153,6 @@ const MintNFT: NextPage = () => {
         args: [ipfsHash, parseEther(nftPrice)],
         value: listPrice,
       });
-
-      // writeContract({
-      //   address: CONTRACT_ADDRESS,
-      //   abi: deployedContracts[31337].NFTMarketplace.abi,
-      //   functionName: "createToken",
-      //   args: [ipfsHash, parseEther(nftPrice)],
-      //   value: listPrice,
-      // });
     } catch (error) {
       console.error("Error minting NFT:", error);
       notification.error(`Failed to mint NFT. Please try again`);

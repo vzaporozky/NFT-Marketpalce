@@ -4,9 +4,8 @@ import React, { useMemo, useState } from "react";
 import Image from "next/image";
 import type { NextPage } from "next";
 import { formatEther } from "viem";
-import { useAccount, useReadContract } from "wagmi";
-import deployedContracts from "~~/contracts/deployedContracts";
-import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { useAccount } from "wagmi";
+import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 const CreatePhoto: NextPage = () => {
   const [title, setTitle] = useState("");
@@ -15,34 +14,26 @@ const CreatePhoto: NextPage = () => {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // const contractAddressMarketplace =
-  //   "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-  const contractAddressBalanceManager = "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512";
-
   const { address: userAddress, isConnected } = useAccount();
 
   const {
     data: creationPrice,
     isLoading: priceLoading,
     error: priceError,
-  } = useReadContract({
-    address: contractAddressBalanceManager,
-    abi: deployedContracts[31337].BalanceManager.abi,
+  } = useScaffoldReadContract({
+    contractName: "BalanceManager",
     functionName: "getPrice",
   });
-
   const {
     data: userBalance,
     isLoading: balanceLoading,
     error: balanceError,
-  } = useReadContract({
-    address: contractAddressBalanceManager,
-    abi: deployedContracts[31337].BalanceManager.abi,
+  } = useScaffoldReadContract({
+    contractName: "BalanceManager",
     functionName: "getBalance",
     args: [userAddress || "0x0000000000000000000000000000000000000000"],
   });
 
-  // const { writeContractAsync } = useWriteContract();
   const { writeContractAsync: writeYourContractAsync } = useScaffoldWriteContract({ contractName: "BalanceManager" });
 
   const isCreateDisabled = useMemo(() => {
@@ -70,12 +61,6 @@ const CreatePhoto: NextPage = () => {
       setTitle("");
       setPrompt("");
       setPhotoUrl(null);
-
-      // const txHash = await writeContractAsync({
-      //   address: contractAddressBalanceManager,
-      //   abi: deployedContracts[31337].BalanceManager.abi,
-      //   functionName: "createPhoto",
-      // });
 
       const tx = await writeYourContractAsync({
         functionName: "createPhoto",
