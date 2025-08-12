@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { useReadContract, useAccount } from "wagmi";
-import type { NextPage } from "next";
+import React, { useMemo, useState } from "react";
 import Image from "next/image";
+import type { NextPage } from "next";
 import { formatEther } from "viem";
+import { useAccount, useReadContract } from "wagmi";
 import deployedContracts from "~~/contracts/deployedContracts";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
@@ -17,8 +17,7 @@ const CreatePhoto: NextPage = () => {
 
   // const contractAddressMarketplace =
   //   "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-  const contractAddressBalanceManager =
-    "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512";
+  const contractAddressBalanceManager = "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512";
 
   const { address: userAddress, isConnected } = useAccount();
 
@@ -44,8 +43,7 @@ const CreatePhoto: NextPage = () => {
   });
 
   // const { writeContractAsync } = useWriteContract();
-  const { writeContractAsync: writeYourContractAsync } =
-    useScaffoldWriteContract({ contractName: "BalanceManager" });
+  const { writeContractAsync: writeYourContractAsync } = useScaffoldWriteContract({ contractName: "BalanceManager" });
 
   const isCreateDisabled = useMemo(() => {
     if (!prompt || !creationPrice || !userBalance) return true;
@@ -92,7 +90,7 @@ const CreatePhoto: NextPage = () => {
         transactionHash: tx,
       };
 
-      const res = await fetch("/api/photo", {
+      const res = await fetch("/api/photo-post", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -114,17 +112,11 @@ const CreatePhoto: NextPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full bg-black bg-opacity-10 backdrop-blur-lg rounded-xl shadow-xl p-6 flex flex-col md:flex-row gap-6">
         {error && <p className="text-red-500">{error}</p>}
-        {priceError && (
-          <p className="text-red-500">Price Error: {priceError.message}</p>
-        )}
-        {balanceError && (
-          <p className="text-red-500">Balance Error: {balanceError.message}</p>
-        )}
+        {priceError && <p className="text-red-500">Price Error: {priceError.message}</p>}
+        {balanceError && <p className="text-red-500">Balance Error: {balanceError.message}</p>}
 
         <div className="flex flex-col">
-          <h2 className="text-2xl font-bold text-white mb-4">
-            Generated Image
-          </h2>
+          <h2 className="text-2xl font-bold text-white mb-4">Generated Image</h2>
           <div className="flex flex-col md:flex-row gap-4">
             <div className="w-[400px]">
               <div className="w-full h-96 bg-gray-800 rounded-lg flex items-center justify-center">
@@ -146,9 +138,7 @@ const CreatePhoto: NextPage = () => {
             </div>
             <div className="w-full md:w-80 flex flex-col gap-4">
               <div className="bg-gray-800 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold text-white">
-                  Pricing Info
-                </h3>
+                <h3 className="text-lg font-semibold text-white">Pricing Info</h3>
                 <p className="text-white">
                   Creation Price:{" "}
                   {priceLoading
@@ -175,7 +165,7 @@ const CreatePhoto: NextPage = () => {
                 <input
                   id="title"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={e => setTitle(e.target.value)}
                   placeholder="Enter your title..."
                   className="w-full p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
@@ -185,7 +175,7 @@ const CreatePhoto: NextPage = () => {
                 <textarea
                   id="prompt"
                   value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
+                  onChange={e => setPrompt(e.target.value)}
                   placeholder="Enter your image prompt..."
                   className="w-full h-32 p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
