@@ -167,9 +167,9 @@ const CreatePhoto: NextPage = () => {
                 <button
                   onClick={handleCreate}
                   disabled={isCreateDisabled || loading}
-                  className={`w-full py-2 rounded-lg font-semibold text-white ${
+                  className={`w-full py-2 rounded-lg font-semibold text-white  ${
                     !isCreateDisabled && !loading
-                      ? "bg-purple-600 hover:bg-purple-700"
+                      ? "bg-purple-600 hover:bg-purple-700 cursor-pointer"
                       : "bg-gray-600 cursor-not-allowed"
                   }`}
                 >

@@ -262,9 +262,9 @@ const MintNFT: NextPage = () => {
                 <button
                   onClick={handleUploadToIPFS}
                   disabled={!imageFile || !nftName || !nftDescription || uploadingToIPFS || isMinting || isConfirming}
-                  className={`flex-1 py-2 rounded-lg font-semibold text-white ${
+                  className={`flex-1 py-2 rounded-lg font-semibold text-white  ${
                     imageFile && nftName && nftDescription && !uploadingToIPFS && !isMinting && !isConfirming
-                      ? "bg-blue-600 hover:bg-blue-700"
+                      ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
                       : "bg-gray-600 cursor-not-allowed"
                   }`}
                 >
@@ -276,9 +276,9 @@ const MintNFT: NextPage = () => {
                   disabled={
                     !ipfsHash || !nftName || !nftDescription || !nftPrice || !isConnected || isMinting || isConfirming
                   }
-                  className={`flex-1 py-2 rounded-lg font-semibold text-white ${
+                  className={`flex-1 py-2 rounded-lg font-semibold text-white  ${
                     ipfsHash && nftName && nftDescription && nftPrice && isConnected && !isMinting && !isConfirming
-                      ? "bg-purple-600 hover:bg-purple-700"
+                      ? "bg-purple-600 hover:bg-purple-700 cursor-pointer"
                       : "bg-gray-600 cursor-not-allowed"
                   }`}
                 >

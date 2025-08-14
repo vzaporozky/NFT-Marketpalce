@@ -181,7 +181,7 @@ const NFTPage = () => {
                   <button
                     onClick={handlePurchase}
                     disabled={isPurchasing || isConfirming}
-                    className={`w-full py-3 rounded-lg font-semibold flex items-center justify-center gap-2 ${
+                    className={`w-full py-3 rounded-lg font-semibold flex items-center justify-center gap-2 cursor-pointer ${
                       isPurchasing || isConfirming
                         ? "bg-gray-600 cursor-not-allowed text-gray-400"
                         : "bg-green-600 hover:bg-green-700 text-white"
