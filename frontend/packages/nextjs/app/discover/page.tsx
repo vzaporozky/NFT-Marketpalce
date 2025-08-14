@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import NFTCard from "./components/NFTCard";
 import type { NextPage } from "next";
-import { useAccount, useWaitForTransactionReceipt } from "wagmi";
+import { useWaitForTransactionReceipt } from "wagmi";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 interface NFTMetadata {
@@ -26,7 +26,6 @@ interface NFTItem {
 const Discover: NextPage = () => {
   const [nfts, setNfts] = useState<NFTItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const { address, isConnected } = useAccount();
 
   const {
     data: allNFTs,
@@ -37,14 +36,9 @@ const Discover: NextPage = () => {
     functionName: "getAllNFTs",
   });
 
-  const {
-    writeContract,
-    data: hash,
-    isPending: isPurchasing,
-    error: purchaseError,
-  } = useScaffoldWriteContract({ contractName: "NFTMarketplace" });
+  const { data: hash, error: purchaseError } = useScaffoldWriteContract({ contractName: "NFTMarketplace" });
 
-  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
+  const { isSuccess } = useWaitForTransactionReceipt({
     hash,
   });
 
@@ -64,29 +58,6 @@ const Discover: NextPage = () => {
       alert(`NFT purchased successfully! Transaction hash: ${hash}`);
     }
   }, [isSuccess, hash, refetchNFTs]);
-
-  const handlePurchase = async (nft: NFTItem) => {
-    if (!isConnected) {
-      alert("Please connect your wallet first");
-      return;
-    }
-
-    if (nft.seller.toLowerCase() === address?.toLowerCase()) {
-      alert("You cannot buy your own NFT");
-      return;
-    }
-
-    try {
-      writeContract({
-        functionName: "executeSale",
-        args: [nft.tokenId],
-        value: nft.price,
-      });
-    } catch (error) {
-      console.error("Error purchasing NFT:", error);
-      alert("Failed to purchase NFT. Please try again.");
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-4">
@@ -121,13 +92,7 @@ const Discover: NextPage = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {nfts.map(nft => (
-                  <NFTCard
-                    key={nft.tokenId.toString()}
-                    nft={nft}
-                    onPurchase={handlePurchase}
-                    isPurchasing={isPurchasing}
-                    isConfirming={isConfirming}
-                  />
+                  <NFTCard key={nft.tokenId.toString()} nft={nft} loading={setLoading} />
                 ))}
               </div>
             </>

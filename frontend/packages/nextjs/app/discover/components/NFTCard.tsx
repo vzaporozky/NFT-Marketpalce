@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatEther } from "viem";
-import { useAccount } from "wagmi";
-import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { useAccount, useWaitForTransactionReceipt } from "wagmi";
+import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 interface NFTMetadata {
   name: string;
@@ -23,17 +23,22 @@ interface NFTItem {
 
 interface NFTCardProps {
   nft: NFTItem;
-  onPurchase: (nft: NFTItem) => void;
-  isPurchasing?: boolean;
-  isConfirming?: boolean;
+  loading?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const NFTCard = ({ nft, onPurchase, isPurchasing, isConfirming }: NFTCardProps) => {
-  const { address } = useAccount();
+const NFTCard = ({ nft, loading }: NFTCardProps) => {
+  const { address, isConnected } = useAccount();
   const router = useRouter();
   const isOwner = nft.seller.toLowerCase() === address?.toLowerCase();
 
-  // Получаем tokenURI из смарт-контракта
+  const { writeContract } = useScaffoldWriteContract({ contractName: "NFTMarketplace" });
+
+  const { data: hash, isPending: isPurchasing } = useScaffoldWriteContract({ contractName: "NFTMarketplace" });
+
+  const { isLoading: isConfirming } = useWaitForTransactionReceipt({
+    hash,
+  });
+
   const { data: tokenURI } = useScaffoldReadContract({
     contractName: "NFTMarketplace",
     functionName: "tokenURI",
@@ -42,7 +47,56 @@ const NFTCard = ({ nft, onPurchase, isPurchasing, isConfirming }: NFTCardProps) 
 
   const [metadata, setMetadata] = useState<NFTMetadata | undefined>();
 
-  // Загружаем метаданные по tokenURI
+  const onPurchase = async (nft: NFTItem) => {
+    if (!isConnected) {
+      alert("Please connect your wallet first");
+      return;
+    }
+
+    if (nft.seller.toLowerCase() === address?.toLowerCase()) {
+      alert("You cannot buy your own NFT");
+      return;
+    }
+
+    try {
+      writeContract({
+        functionName: "executeSale",
+        args: [nft.tokenId],
+        value: nft.price,
+      });
+    } catch (error) {
+      console.error("Error purchasing NFT:", error);
+      alert("Failed to purchase NFT. Please try again.");
+    }
+  };
+
+  const {
+    writeContract: unlistNFT,
+    data: unlistHash,
+    isPending: isUnlisting,
+  } = useScaffoldWriteContract({ contractName: "NFTMarketplace" });
+
+  const { isLoading: isUnlistConfirming } = useWaitForTransactionReceipt({
+    hash: unlistHash,
+  });
+
+  const handleUnlistNFT = async (tokenId: bigint) => {
+    if (!isConnected) {
+      alert("Please connect your wallet first");
+      return;
+    }
+
+    try {
+      unlistNFT({
+        functionName: "unListToken",
+        args: [tokenId],
+      });
+    } catch (error) {
+      console.error("Error unlisting NFT:", error);
+      alert("Failed to unlist NFT. Please try again.");
+    }
+  };
+
   useEffect(() => {
     const fetchMetadata = async () => {
       if (tokenURI) {
@@ -94,8 +148,11 @@ const NFTCard = ({ nft, onPurchase, isPurchasing, isConfirming }: NFTCardProps) 
 
         <div className="flex gap-2">
           <button
-            onClick={() => router.push(`/nftpage/${nft.tokenId}`)}
-            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-semibold flex items-center justify-center gap-2"
+            onClick={() => {
+              router.push(`/nftpage/${nft.tokenId}`);
+              loading?.(true);
+            }}
+            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-semibold flex items-center justify-center gap-2 cursor-pointer"
           >
             View
           </button>
@@ -107,7 +164,7 @@ const NFTCard = ({ nft, onPurchase, isPurchasing, isConfirming }: NFTCardProps) 
               className={`flex-1 py-2 px-4 rounded-lg font-semibold flex items-center justify-center gap-2 ${
                 isPurchasing || isConfirming
                   ? "bg-gray-600 cursor-not-allowed text-gray-400"
-                  : "bg-green-600 hover:bg-green-700 text-white"
+                  : "bg-green-600 hover:bg-green-700 text-white cursor-pointer"
               }`}
             >
               {isPurchasing ? "Buying..." : isConfirming ? "Confirming..." : "Buy"}
@@ -115,9 +172,17 @@ const NFTCard = ({ nft, onPurchase, isPurchasing, isConfirming }: NFTCardProps) 
           )}
 
           {isOwner && (
-            <div className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg font-semibold text-center">
-              Your NFT
-            </div>
+            <button
+              onClick={() => handleUnlistNFT(nft.tokenId)}
+              disabled={isUnlisting || isUnlistConfirming}
+              className={`flex-1 py-2 px-4 rounded-lg font-semibold flex items-center justify-center gap-2 ${
+                isUnlisting || isUnlistConfirming
+                  ? "bg-gray-600 cursor-not-allowed text-gray-400"
+                  : "bg-yellow-600 hover:bg-yellow-700 text-white cursor-pointer"
+              }`}
+            >
+              {isUnlisting ? "Unlisting..." : isUnlistConfirming ? "Confirming..." : "Unlist NFT"}
+            </button>
           )}
         </div>
       </div>
