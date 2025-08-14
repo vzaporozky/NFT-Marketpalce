@@ -3,7 +3,7 @@ import { createPhotoService } from '../services/photoService';
 
 export const createPhoto = async (request, reply) => {
 	try {
-		const { title, description, userAddress } = request.body;
+		const { title, description, userAddress, transactionHash } = request.body;
 
 		// const { photoId, photoPath } = await createPhotoService(
 		// 	title,
