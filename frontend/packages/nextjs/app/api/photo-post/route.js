@@ -13,10 +13,7 @@ export async function POST(request) {
     });
 
     if (!res.ok) {
-      return NextResponse.json(
-        { error: "Failed to create photo" },
-        { status: res.status },
-      );
+      return NextResponse.json({ error: "Failed to create photo" }, { status: res.status });
     }
 
     const arrayBuffer = await res.arrayBuffer();
