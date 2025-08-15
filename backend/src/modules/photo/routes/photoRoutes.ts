@@ -1,7 +1,9 @@
 import { createPhoto } from '../controllers/createPhotoController';
-import { getPhoto } from '../controllers/getPhotosController';
+import { getPhotos } from '../controllers/getPhotosController';
+import { getPhoto } from '../controllers/getPhotoController';
 
 export default async function (fastify) {
 	fastify.post('/createPhoto', createPhoto);
-	fastify.post('/getPhotos', getPhoto);
+	fastify.post('/getPhotos', getPhotos);
+	fastify.post('/getPhoto', getPhoto);
 }
