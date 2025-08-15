@@ -75,7 +75,7 @@ const Profile: NextPage = () => {
 
       setLoadingPhotos(true);
       try {
-        const response = await fetch("/api/photo-get", {
+        const resPhotos = await fetch("/api/photos-get", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -83,15 +83,15 @@ const Profile: NextPage = () => {
           body: JSON.stringify({ address }),
         });
 
-        const data = await response.json();
+        const photoIds = await resPhotos.json();
 
-        console.log(data);
-
-        if (response.ok) {
-          setUserPhotos(data.photos || []);
-        } else {
-          console.error("Failed to fetch photos:", data.error || "Unknown error");
+        if (!resPhotos.ok) {
+          console.error("Failed to fetch photo IDs:", photoIds.error || "Unknown error");
+          setLoadingPhotos(false);
+          return;
         }
+
+        setUserPhotos(photoIds || []);
       } catch (error) {
         console.error("Error loading user photos:", error);
       } finally {
