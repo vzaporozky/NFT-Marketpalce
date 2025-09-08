@@ -9,7 +9,7 @@ contract BalanceManager is Ownable, ReentrancyGuard {
     uint256 price = 0.0005 ether;
 
     event Deposit(address indexed user, uint256 amount);
-    event BalanceDecreased(address indexed user, uint256 amount);
+    event PhotoCreated(address indexed user, uint256 amount);
     event PriceUpdated(uint256 newPrice);
     event Withdrawal(address indexed user, uint256 amount);
 
@@ -32,7 +32,7 @@ contract BalanceManager is Ownable, ReentrancyGuard {
     function createPhoto() external nonReentrant {
         require(balances[msg.sender] >= price, "Insufficient balance");
         balances[msg.sender] -= price;
-        emit BalanceDecreased(msg.sender, price);
+        emit PhotoCreated(msg.sender, price);
     }
 
     function setPrice(uint256 newPrice) external onlyOwner {
