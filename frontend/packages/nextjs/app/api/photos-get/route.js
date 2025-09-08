@@ -15,10 +15,6 @@ export async function POST(request) {
       body: JSON.stringify("testda"),
     });
 
-    console.log(res.ok);
-    console.log(res.ok);
-    console.log(res.ok);
-
     if (!res.ok) {
       const errorData = await res.json();
       return NextResponse.json({ error: errorData.error || "Failed to create photo" }, { status: res.status });
@@ -26,10 +22,6 @@ export async function POST(request) {
 
     const responseData = await res.json();
     const dataPhotos = responseData.map(item => item.photoPath);
-
-    console.log(dataPhotos);
-    console.log(dataPhotos);
-    console.log(dataPhotos);
 
     const photosUrls = await Promise.all(
       dataPhotos.map(async photo => {
@@ -49,8 +41,6 @@ export async function POST(request) {
 
           const photoBlob = await response.blob();
 
-          console.log(photoBlob);
-          console.log(photoBlob);
           console.log(photoBlob);
 
           const photoUrl = `data:image/jpeg;base64,${Buffer.from(await photoBlob.arrayBuffer()).toString("base64")}`;
