@@ -1,8 +1,13 @@
-// import { checkUserBalance } from '../../../utils/checkBalance';
 import { createPhotoOpenAI } from './createPhotoOpenAI';
 import { fastify } from '../../../server';
 
-async function createPhotoService(title, description, userAddress) {
+async function createPhotoService(
+	createPhotoId,
+	title,
+	description,
+	userAddress,
+	transactionHash
+) {
 	try {
 		if (!title || !userAddress) {
 			throw new Error('Title and userAddress are required');
@@ -16,11 +21,6 @@ async function createPhotoService(title, description, userAddress) {
 			throw new Error('User not found');
 		}
 
-		// const hasEnoughBalance = await checkUserBalance(userAddress);
-		// if (!hasEnoughBalance) {
-		// 	throw new Error('Insufficient balance to create photo');
-		// }
-
 		const { photoPath, photoId, defaultPrompt } = await createPhotoOpenAI(
 			fastify,
 			description
@@ -28,11 +28,11 @@ async function createPhotoService(title, description, userAddress) {
 
 		if (!description) description = defaultPrompt;
 
-		await fastify.prisma.photo.create({
+		await fastify.prisma.photo.update({
+			where: {
+				id: createPhotoId,
+			},
 			data: {
-				user: {
-					connect: { userAddress: userAddress },
-				},
 				photoPath,
 				description,
 			},

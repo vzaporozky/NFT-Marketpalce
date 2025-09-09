@@ -21,6 +21,7 @@ model Photo {
   user          User     @relation(fields: [userAddress], references: [id])
   photoPath     String   @default("")  
   description   String   @default("")  
+  hash          String   @default("")  
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
