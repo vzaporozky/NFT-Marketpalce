@@ -10,16 +10,16 @@ import { notification } from "~~/utils/scaffold-eth";
 
 const MintNFT: NextPage = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [ipfsHash, setIpfsHash] = useState<string | null>(null);
   const [nftName, setNftName] = useState("");
   const [nftDescription, setNftDescription] = useState("");
   const [nftPrice, setNftPrice] = useState("0.1");
-  const [createdImages, setCreatedImages] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
   const [uploadingToIPFS, setUploadingToIPFS] = useState(false);
+  const [loadingPhotos, setLoadingPhotos] = useState(false);
+  const [userPhotos, setUserPhotos] = useState<string[]>([]);
+  const [activePhoto, setActivePhoto] = useState<string | number | null>(null);
 
-  const { isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
 
   const { data: listPrice } = useScaffoldReadContract({
     contractName: "NFTMarketplace",
@@ -38,31 +38,9 @@ const MintNFT: NextPage = () => {
   });
 
   useEffect(() => {
-    setIpfsHash("https://bafybeift3lsrs4b4mlkemvab6rodzergpaej6jegr5dhllx2ozwlm4nexi.ipfs.community.bgipfs.com/");
-
-    const fetchCreatedImages = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch("/api/created-images");
-        if (!response.ok) {
-          throw new Error("Failed to fetch created images");
-        }
-        const data = await response.json();
-        setCreatedImages(data.images || []);
-      } catch (error) {
-        console.error("Error fetching created images:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCreatedImages();
-  }, []);
-
-  useEffect(() => {
     if (isSuccess) {
       setImageFile(null);
-      setImagePreview(null);
+      setActivePhoto(null);
       setIpfsHash(null);
       setNftName("");
       setNftDescription("");
@@ -72,11 +50,30 @@ const MintNFT: NextPage = () => {
     }
   }, [isSuccess, hash]);
 
+  const base64ToFile = (base64String: string): File => {
+    const byteString = atob(base64String.replace(/^data:image\/jpeg;base64,/, ""));
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const uint8Array = new Uint8Array(arrayBuffer);
+
+    for (let i = 0; i < byteString.length; i++) {
+      uint8Array[i] = byteString.charCodeAt(i);
+    }
+
+    const blob = new Blob([arrayBuffer], { type: "image/jpeg" });
+    return new File([blob], nftName, { type: "image/jpeg" });
+  };
+
+  const handleSetActivePhoto = (index: number) => {
+    setActivePhoto(index);
+    const file = base64ToFile(userPhotos[index]);
+    setImageFile(file);
+  };
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+      setActivePhoto(URL.createObjectURL(file));
     }
   };
 
@@ -117,10 +114,14 @@ const MintNFT: NextPage = () => {
         throw new Error("Failed to upload metadata to IPFS");
       }
 
-      const metadataData = await metadataResponse.json();
-      const tokenURI = `https://ipfs.io/ipfs/${metadataData}`;
+      const linkMetadataData = await metadataResponse.json();
+      // const tokenURI = `https://ipfs.io/ipfs/${metadataData}`;
 
-      setIpfsHash(tokenURI);
+      console.log(linkMetadataData.link);
+      console.log(linkMetadataData.link);
+      console.log(linkMetadataData.link);
+
+      setIpfsHash(linkMetadataData.link);
     } catch (error) {
       console.error("Error uploading to IPFS:", error);
       notification.error(`Failed to upload to IPFS. Please try again`);
@@ -159,16 +160,48 @@ const MintNFT: NextPage = () => {
     }
   };
 
+  useEffect(() => {
+    const loadUserPhotos = async () => {
+      if (!address) return;
+
+      setLoadingPhotos(true);
+      try {
+        const resPhotos = await fetch("/api/photos-get", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ address }),
+        });
+
+        const photoIds = await resPhotos.json();
+
+        if (!resPhotos.ok) {
+          console.error("Failed to fetch photo IDs:", photoIds.error || "Unknown error");
+          setLoadingPhotos(false);
+          return;
+        }
+
+        setUserPhotos(photoIds || []);
+      } catch (error) {
+        console.error("Error loading user photos:", error);
+      } finally {
+        setLoadingPhotos(false);
+      }
+    };
+
+    loadUserPhotos();
+  }, [address]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
       <div className="max-w-5xl w-full bg-black bg-opacity-10 backdrop-blur-lg rounded-xl shadow-xl p-6 flex flex-col md:flex-row gap-6">
-        {/* Image Upload and Display */}
         <div className="flex-1">
           <h2 className="text-2xl font-bold text-white mb-4">Upload NFT Image</h2>
           <div className="w-full h-96 bg-gray-800 rounded-lg flex items-center justify-center mb-4">
-            {imagePreview ? (
+            {activePhoto !== null ? (
               <Image
-                src={imagePreview}
+                src={typeof activePhoto === "number" ? userPhotos[activePhoto] : activePhoto}
                 alt="Uploaded"
                 width={400}
                 height={400}
@@ -187,31 +220,41 @@ const MintNFT: NextPage = () => {
           />
         </div>
 
-        {/* Sidebar with Wallet, Created Images and Token Details */}
         <div className="w-full md:w-80 flex flex-col gap-4">
-          {/* Created Images */}
           <div className="bg-gray-800 p-4 rounded-lg">
             <h3 className="text-lg font-semibold text-white mb-4">Your Created Images</h3>
             <div className="max-h-32 overflow-y-auto mb-4">
-              {loading ? (
-                <p className="text-gray-400">Loading images...</p>
-              ) : createdImages.length > 0 ? (
-                createdImages.map((img, index) => (
-                  <Image
-                    key={index}
-                    src={img}
-                    width={400}
-                    height={400}
-                    alt={`Created ${index}`}
-                    className="w-full h-20 object-cover rounded-lg mb-2"
-                  />
-                ))
+              {loadingPhotos ? (
+                <div className="text-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+                  <p className="text-white">Loading your photos...</p>
+                </div>
+              ) : userPhotos.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-white text-xl mb-2">No photos found</p>
+                  <p className="text-gray-400">Your created photos will appear here</p>
+                </div>
               ) : (
-                <p className="text-gray-400">No images created yet</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {userPhotos.map((photo, index) => (
+                    <div
+                      key={index}
+                      onClick={() => handleSetActivePhoto(index)}
+                      className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
+                    >
+                      <div className="aspect-square">
+                        <img
+                          src={photo}
+                          alt={`Photo ${index + 1}`}
+                          className="w-full h-full object-cover cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
 
-            {/* Token Details */}
             <div className="flex flex-col gap-4">
               <div>
                 <label htmlFor="nftName" className="block text-white font-medium mb-1">
