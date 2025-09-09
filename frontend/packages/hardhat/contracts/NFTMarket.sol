@@ -11,7 +11,7 @@ contract NFTMarketplace is ERC721URIStorage, Ownable, ReentrancyGuard {
 
     uint256 private _tokenIds;
     uint256 private _itemsSold;
-    uint256 public listPrice = 0.01 ether;
+    uint256 public listPrice = 0.0005 ether;
     uint256[] private listedTokenIds;
 
     struct ListedToken {
