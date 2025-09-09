@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import type { NextPage } from "next";
-import { parseEther } from "viem";
+import { formatEther, parseEther } from "viem";
 import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { notification } from "~~/utils/scaffold-eth";
@@ -13,7 +13,7 @@ const MintNFT: NextPage = () => {
   const [ipfsHash, setIpfsHash] = useState<string | null>(null);
   const [nftName, setNftName] = useState("");
   const [nftDescription, setNftDescription] = useState("");
-  const [nftPrice, setNftPrice] = useState("0.1");
+  const [nftPrice, setNftPrice] = useState("0.001");
   const [uploadingToIPFS, setUploadingToIPFS] = useState(false);
   const [loadingPhotos, setLoadingPhotos] = useState(false);
   const [userPhotos, setUserPhotos] = useState<string[]>([]);
@@ -24,6 +24,16 @@ const MintNFT: NextPage = () => {
   const { data: listPrice } = useScaffoldReadContract({
     contractName: "NFTMarketplace",
     functionName: "getListPrice",
+  });
+
+  const { data: creationPrice, isLoading: priceLoading } = useScaffoldReadContract({
+    contractName: "BalanceManager",
+    functionName: "getPrice",
+  });
+  const { data: userBalance, isLoading: balanceLoading } = useScaffoldReadContract({
+    contractName: "BalanceManager",
+    functionName: "getBalance",
+    args: [address || "0x0000000000000000000000000000000000000000"],
   });
 
   const {
@@ -115,11 +125,6 @@ const MintNFT: NextPage = () => {
       }
 
       const linkMetadataData = await metadataResponse.json();
-      // const tokenURI = `https://ipfs.io/ipfs/${metadataData}`;
-
-      console.log(linkMetadataData.link);
-      console.log(linkMetadataData.link);
-      console.log(linkMetadataData.link);
 
       setIpfsHash(linkMetadataData.link);
     } catch (error) {
@@ -147,8 +152,6 @@ const MintNFT: NextPage = () => {
     }
 
     try {
-      console.log(parseEther(nftPrice));
-
       await writeYourContractAsync({
         functionName: "createToken",
         args: [ipfsHash, parseEther(nftPrice)],
@@ -222,6 +225,27 @@ const MintNFT: NextPage = () => {
 
         <div className="w-full md:w-80 flex flex-col gap-4">
           <div className="bg-gray-800 p-4 rounded-lg">
+            <div className="bg-gray-800 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold text-white">Pricing Info</h3>
+              <p className="text-white">
+                Creation Price:{" "}
+                {priceLoading
+                  ? "Loading..."
+                  : creationPrice
+                    ? `${Number(formatEther(creationPrice)).toFixed(4)} ETH`
+                    : "Unavailable"}
+              </p>
+              <p className="text-white">
+                Your Balance:{" "}
+                {!isConnected
+                  ? "Connect wallet to see balance"
+                  : balanceLoading
+                    ? "Loading..."
+                    : userBalance
+                      ? `${Number(formatEther(userBalance)).toFixed(4)} ETH`
+                      : "0 ETH"}
+              </p>
+            </div>
             <h3 className="text-lg font-semibold text-white mb-4">Your Created Images</h3>
             <div className="max-h-32 overflow-y-auto mb-4">
               {loadingPhotos ? (
@@ -329,7 +353,6 @@ const MintNFT: NextPage = () => {
                 </button>
               </div>
 
-              {/* Status Messages */}
               {mintError && (
                 <div className="bg-red-600 bg-opacity-20 border border-red-600 rounded-lg p-3">
                   <p className="text-red-300 text-sm">Error: {mintError.message}</p>

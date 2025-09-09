@@ -5,8 +5,7 @@ import NFTCard from "../discover/components/NFTCard";
 import { blo } from "blo";
 import type { NextPage } from "next";
 import { formatEther, parseEther } from "viem";
-import { useAccount, useReadContract, useWaitForTransactionReceipt } from "wagmi";
-import deployedContracts from "~~/contracts/deployedContracts";
+import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 interface NFTMetadata {
@@ -28,7 +27,7 @@ interface NFTItem {
 
 const Profile: NextPage = () => {
   const [activeTab, setActiveTab] = useState<"nft" | "photos">("nft");
-  const [depositAmount, setDepositAmount] = useState("0.1");
+  const [depositAmount, setDepositAmount] = useState("0.001");
   const [nfts, setNfts] = useState<NFTItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [userPhotos, setUserPhotos] = useState<string[]>([]);
@@ -42,9 +41,8 @@ const Profile: NextPage = () => {
     args: [address],
   });
 
-  const { data: myNFTs, isLoading: isLoadingNFTs } = useReadContract({
-    abi: deployedContracts[31337].NFTMarketplace.abi,
-    address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  const { data: myNFTs, isLoading: isLoadingNFTs } = useScaffoldReadContract({
+    contractName: "NFTMarketplace",
     functionName: "getMyNFTs",
   });
 
