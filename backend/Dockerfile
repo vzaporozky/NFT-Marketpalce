@@ -7,7 +7,7 @@ WORKDIR /app
 
 COPY --chown=node:node package*.json ./
 
-# RUN npm ci --only=production --ignore-scripts && npm cache clean --force
+# RUN npm ci --only=production --ignore-scripts
 RUN npm ci --ignore-scripts
 
 
@@ -50,5 +50,5 @@ COPY --chown=node:node prisma ./prisma
 
 EXPOSE 3000
 
-# CMD ["node", "./dist/src/index.js"] 
-CMD ["npm", "run", "start"]
+CMD ["node", "./dist/src/index.js"] 
+# CMD ["npm", "run", "start"]

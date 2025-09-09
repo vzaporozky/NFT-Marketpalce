@@ -13,7 +13,7 @@ services:
       - mongo
       # - blockchain
     volumes:
-      - ./backend:/app
+      # - ./backend:/app
       - photos-volume:/app/photos
     restart: always
     networks:
