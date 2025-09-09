@@ -1,4 +1,4 @@
-import { balanceManagerEther } from '../../../utils/balanceMaganer';
+import { fastify } from '../../../server';
 import { checkTransaction } from '../../../utils/checkTr';
 import { createPhotoService } from '../services/photoService';
 
@@ -9,19 +9,18 @@ export const createPhoto = async (request, reply) => {
 		const createPhotoId = await checkTransaction(transactionHash, userAddress);
 
 		if (!createPhotoId) {
-			return reply.code(400).send({ error: 'Transaction not found' });
+			return reply.code(400).send({ error: 'Failed to check transaction' });
 		}
 
-		// const { photoId, photoPath } = await createPhotoService(
-		// 	createPhotoId,
-		// 	title,
-		// 	description,
-		// 	userAddress,
-		// 	transactionHash
-		// );
+		const { photoId, photoPath } = await createPhotoService(
+			createPhotoId,
+			title,
+			description,
+			userAddress
+		);
 
 		reply.header('Content-Type', 'image/jpeg');
-		// return reply.sendFile(photoId + '.png');
+		return reply.sendFile(photoId + '.png');
 	} catch (error) {
 		return reply.code(500).send({ error: 'Failed to create or send photo' });
 	}

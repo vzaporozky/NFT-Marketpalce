@@ -5,8 +5,7 @@ async function createPhotoService(
 	createPhotoId,
 	title,
 	description,
-	userAddress,
-	transactionHash
+	userAddress
 ) {
 	try {
 		if (!title || !userAddress) {
