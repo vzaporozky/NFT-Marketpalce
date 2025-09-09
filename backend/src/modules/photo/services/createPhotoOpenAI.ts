@@ -16,8 +16,7 @@ async function createPhotoOpenAI(fastify, description) {
 		const photoId = nanoid();
 		const photoPath = path.join(PHOTOS_DIR, `${photoId}.png`);
 
-		const defaultPrompt =
-			'A cyberpunk robot with pink hair and light blue eyes';
+		const defaultPrompt = 'dog corgi between pink chery';
 
 		const response = await openai.images.generate({
 			model: 'dall-e-3',

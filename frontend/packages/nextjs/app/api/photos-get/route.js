@@ -4,15 +4,12 @@ export async function POST(request) {
   try {
     const data = await request.json();
 
-    console.log(data);
-
     const res = await fetch("http://localhost:8080/photo/getPhotos", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      // body: JSON.stringify(data.address),
-      body: JSON.stringify("testda"),
+      body: JSON.stringify(data.address),
     });
 
     if (!res.ok) {
@@ -40,8 +37,6 @@ export async function POST(request) {
           }
 
           const photoBlob = await response.blob();
-
-          console.log(photoBlob);
 
           const photoUrl = `data:image/jpeg;base64,${Buffer.from(await photoBlob.arrayBuffer()).toString("base64")}`;
 
