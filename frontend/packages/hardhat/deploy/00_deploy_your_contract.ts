@@ -9,14 +9,12 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
 
   await deploy("NFTMarketplace", {
     from: deployer,
-    // args: [deployer],
     log: true,
     autoMine: true,
   });
 
   await deploy("BalanceManager", {
     from: deployer,
-    // args: [deployer],
     log: true,
     autoMine: true,
   });

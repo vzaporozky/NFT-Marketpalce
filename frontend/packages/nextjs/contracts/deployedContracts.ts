@@ -262,17 +262,6 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "AddressInsufficientBalance",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
               name: "sender",
               type: "address",
             },
@@ -374,7 +363,23 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "FailedInnerCall",
+          name: "FailedCall",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "balance",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "needed",
+              type: "uint256",
+            },
+          ],
+          name: "InsufficientBalance",
           type: "error",
         },
         {
