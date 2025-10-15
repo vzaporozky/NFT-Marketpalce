@@ -2,20 +2,20 @@ import { createPublicClient, http } from 'viem';
 import { fastify } from '../server';
 import { sepolia } from 'viem/chains';
 
-const hardhatChain = {
-	id: 31337,
-	name: 'Hardhat',
-	network: 'hardhat',
-	nativeCurrency: {
-		decimals: 18,
-		name: 'Ether',
-		symbol: 'ETH',
-	},
-	rpcUrls: {
-		default: { http: ['http://host.docker.internal:8545'] },
-		public: { http: ['http://host.docker.internal:8545'] },
-	},
-};
+// const hardhatChain = {
+// 	id: 31337,
+// 	name: 'Hardhat',
+// 	network: 'hardhat',
+// 	nativeCurrency: {
+// 		decimals: 18,
+// 		name: 'Ether',
+// 		symbol: 'ETH',
+// 	},
+// 	rpcUrls: {
+// 		default: { http: ['http://host.docker.internal:8545'] },
+// 		public: { http: ['http://host.docker.internal:8545'] },
+// 	},
+// };
 
 const checkTransaction = async (transactionHash, userAddress) => {
 	try {
@@ -30,7 +30,7 @@ const checkTransaction = async (transactionHash, userAddress) => {
 		}
 
 		const publicClient = createPublicClient({
-			chain: hardhatChain,
+			chain: sepolia,
 			transport: http(),
 		});
 
