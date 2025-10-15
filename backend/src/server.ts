@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import prismaPlugin from './plugins/prisma';
 import shutdownPlugin from './plugins/shutdown';
+import cors from '@fastify/cors';
 import photoRoutes from './modules/photo/routes/photoRoutes';
 // import { authRoutes } from './modules/auth/routes/auth.routes';
 const jwtPlugin = require('./plugins/jwtPlugin');
@@ -15,6 +16,12 @@ export const fastify = Fastify({
 const TEMP_DIR = '/app/photos';
 
 require('dotenv').config();
+
+fastify.register(cors, {
+	origin: 'https://nft-marketpalce-tau.vercel.app',
+	methods: ['GET', 'POST'],
+	allowedHeaders: ['Content-Type', 'Authorization'],
+});
 
 fastify.register(jwtPlugin);
 fastify.register(prismaPlugin);
