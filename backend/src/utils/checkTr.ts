@@ -19,6 +19,20 @@ import { sepolia } from 'viem/chains';
 
 const checkTransaction = async (transactionHash, userAddress) => {
 	try {
+		const user = await fastify.prisma.user.findUnique({
+			where: {
+				userAddress: userAddress,
+			},
+		});
+
+		if (!user) {
+			await fastify.prisma.user.create({
+				data: {
+					userAddress: userAddress,
+				},
+			});
+		}
+
 		const photo = await fastify.prisma.photo.findFirst({
 			where: {
 				hash: transactionHash,

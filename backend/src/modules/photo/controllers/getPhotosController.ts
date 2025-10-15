@@ -8,6 +8,22 @@ export const getPhotos = async (request, reply) => {
 			return reply.status(400).send({ error: 'Invalid or missing address' });
 		}
 
+		const user = await fastify.prisma.user.findUnique({
+			where: {
+				userAddress: userAddress,
+			},
+		});
+
+		if (!user) {
+			await fastify.prisma.user.create({
+				data: {
+					userAddress: userAddress,
+				},
+			});
+
+			return reply.status(200).send([]);
+		}
+
 		const userPhotos = await fastify.prisma.user.findUnique({
 			where: {
 				userAddress: userAddress,
