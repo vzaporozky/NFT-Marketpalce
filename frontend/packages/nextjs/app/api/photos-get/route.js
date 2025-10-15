@@ -4,7 +4,7 @@ export async function POST(request) {
   try {
     const data = await request.json();
 
-    const res = await fetch("http://localhost:8080/photo/getPhotos", {
+    const res = await fetch("http://104.248.92.251:8080/photo/getPhotos", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -23,7 +23,7 @@ export async function POST(request) {
     const photosUrls = await Promise.all(
       dataPhotos.map(async photo => {
         try {
-          const response = await fetch("http://localhost:8080/photo/getPhoto", {
+          const response = await fetch("http://104.248.92.251:8080/photo/getPhoto", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
