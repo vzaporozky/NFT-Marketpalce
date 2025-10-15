@@ -9,7 +9,7 @@ export async function POST(request) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data.address),
+      body: JSON.stringify(data.userAddress),
     });
 
     if (!res.ok) {

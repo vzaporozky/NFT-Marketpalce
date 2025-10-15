@@ -167,6 +167,8 @@ const MintNFT: NextPage = () => {
     const loadUserPhotos = async () => {
       if (!address) return;
 
+      const userAddress = address;
+
       setLoadingPhotos(true);
       try {
         const resPhotos = await fetch("/api/photos-get", {
@@ -174,7 +176,7 @@ const MintNFT: NextPage = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ address }),
+          body: JSON.stringify({ userAddress }),
         });
 
         const photoIds = await resPhotos.json();
