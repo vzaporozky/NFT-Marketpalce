@@ -38,7 +38,7 @@ const checkTransaction = async (transactionHash, userAddress) => {
 			hash: transactionHash,
 		});
 
-		if (!transaction.input.includes('0x657f1a15')) {
+		if (!transaction.input.includes('0xd80A38dff93a55D')) {
 			return null;
 		}
 
